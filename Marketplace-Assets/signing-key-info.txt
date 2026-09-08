@@ -1,0 +1,10 @@
+Keep this file and signing.keystore in a safe place. You'll need these files if you want to upload future versions of your PWA to the Google Play Store.
+
+Key store file: signing.keystore
+Key store password: VzYCcSxEW4ch
+Key alias: arunai
+Key password: VzYCcSxEW4ch
+Signer's full name: Gopagani Arun
+Signer's organization: Arun AI
+Signer's organizational unit: Apps
+Signer's country code: IN

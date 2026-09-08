@@ -1,0 +1,23 @@
+﻿{
+  "expo": {
+    "name": "Arun AI",
+    "slug": "arun-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.arun.ai",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#131314"
+      },
+      "permissions": [
+        "INTERNET",
+        "RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

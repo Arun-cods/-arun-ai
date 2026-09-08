@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Deep Space Canvas Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080b14"/>
+      <stop offset="45%" stop-color="#0e1326"/>
+      <stop offset="100%" stop-color="#060810"/>
+    </linearGradient>
+
+    <!-- Outer Rim Luminescence -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.9"/>
+      <stop offset="35%" stop-color="#3b82f6" stop-opacity="0.5"/>
+      <stop offset="70%" stop-color="#a855f7" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ec4899" stop-opacity="0.4"/>
+    </linearGradient>
+
+    <!-- Core Ambient Radial Glow -->
+    <radialGradient id="ambientGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.32"/>
+      <stop offset="35%" stop-color="#6366f1" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#a855f7" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#080b14" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Left Facet Gradient -->
+    <linearGradient id="leftFacet" x1="0%" y1="100%" x2="70%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="40%" stop-color="#00f5ff"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+
+    <!-- Right Facet Gradient -->
+    <linearGradient id="rightFacet" x1="30%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#c084fc"/>
+      <stop offset="75%" stop-color="#9333ea"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+
+    <!-- Core Crossbar Bridge Gradient -->
+    <linearGradient id="bridgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+
+    <!-- Specular Highlight Overlay -->
+    <linearGradient id="specularSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- High-intensity Multi-Stage Glow Filter -->
+    <filter id="bloomFilter" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="glow1"/>
+      <feGaussianBlur stdDeviation="24" result="glow2"/>
+      <feGaussianBlur stdDeviation="40" result="glow3"/>
+      <feMerge>
+        <feMergeNode in="glow3"/>
+        <feMergeNode in="glow2"/>
+        <feMergeNode in="glow1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Squircle Frame -->
+  <rect x="14" y="14" width="484" height="484" rx="116" fill="url(#bgGrad)" stroke="url(#rimGrad)" stroke-width="3.5"/>
+
+  <!-- Radial Core Energy Field -->
+  <circle cx="256" cy="256" r="210" fill="url(#ambientGlow)"/>
+
+  <!-- Orbital Cyber Rings -->
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#00f5ff" stroke-opacity="0.18" stroke-dasharray="8 12" stroke-width="1.8"/>
+  <circle cx="256" cy="256" r="132" fill="none" stroke="#a855f7" stroke-opacity="0.22" stroke-dasharray="4 8" stroke-width="1.4"/>
+
+  <!-- Satellite Neural Sparkles -->
+  <circle cx="120" cy="210" r="3.5" fill="#00f5ff" opacity="0.75"/>
+  <circle cx="392" cy="220" r="3.5" fill="#ec4899" opacity="0.75"/>
+  <circle cx="256" cy="74" r="4.5" fill="#ffffff" opacity="0.9"/>
+  <circle cx="256" cy="438" r="3.5" fill="#3b82f6" opacity="0.6"/>
+
+  <!-- Primary Glowing Monogram "A" with Neural Spark -->
+  <g filter="url(#bloomFilter)">
+    <!-- Left Ascent Pillar -->
+    <path d="M 256,96 L 126,384 L 184,384 L 256,212 Z" fill="url(#leftFacet)"/>
+    
+    <!-- Right Descent Pillar -->
+    <path d="M 256,96 L 256,212 L 328,384 L 386,384 Z" fill="url(#rightFacet)"/>
+    
+    <!-- Dynamic Prismatic Crossbar -->
+    <path d="M 174,286 L 338,286 L 324,316 L 188,316 Z" fill="url(#bridgeGrad)"/>
+
+    <!-- Polished Glass Specular Sheen (Left facet inner edge) -->
+    <path d="M 256,96 L 196,240 L 210,240 L 256,128 Z" fill="url(#specularSheen)" opacity="0.65"/>
+
+    <!-- Central Neural Nexus (4-Point Star in the A bridge) -->
+    <g transform="translate(256, 290)">
+      <path d="M 0,-24 Q 0,-4 20,0 Q 0,4 0,24 Q 0,4 -20,0 Q 0,-4 0,-24 Z" fill="#ffffff"/>
+      <circle cx="0" cy="0" r="5" fill="#00f5ff"/>
+    </g>
+
+    <!-- Apex Neural Beacon (Radiant Crown Spark) -->
+    <g transform="translate(256, 96)">
+      <path d="M 0,-20 Q 0,-3 17,0 Q 0,3 0,20 Q 0,3 -17,0 Q 0,-3 0,-20 Z" fill="#ffffff"/>
+      <circle cx="0" cy="0" r="4.5" fill="#00f5ff"/>
+    </g>
+  </g>
+</svg>

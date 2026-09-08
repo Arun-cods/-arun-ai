@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arun AI — Official Documentation & Setup Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0a0d16;
+            --bg-surface: #121727;
+            --bg-card: #181f33;
+            --border: #232d4b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #00f2fe;
+            --accent-grad: linear-gradient(135deg, #0052d4, #4364f7, #00f2fe);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.65;
+            padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            padding: 40px 20px 30px;
+            background: var(--bg-surface);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        .hero h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #00f2fe, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .hero p { color: var(--text-muted); font-size: 15px; }
+        .badge {
+            display: inline-block;
+            background: rgba(0, 242, 254, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 9999px;
+            padding: 4px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        .card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card p, .card li { color: var(--text-muted); font-size: 14.5px; }
+        ul { padding-left: 20px; margin: 10px 0; }
+        li { margin-bottom: 6px; }
+        pre {
+            background: #090c14;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #38bdf8;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+        .feature-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .feature-item h3 { font-size: 15px; color: #fff; margin-bottom: 4px; }
+        .feature-item p { font-size: 13px; color: var(--text-muted); }
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-grad);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13.5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <span class="badge">COMMERCIAL SAAS EDITION</span>
+            <h1>Arun AI — Next-Gen AI Assistant & Photo Studio</h1>
+            <p>Complete Setup, Deployment & Customization Manual</p>
+        </div>
+
+        <div class="card">
+            <h2>⚡ 1. Key Features Included</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>🧠 Dual AI Engine</h3>
+                    <p>Zero-Key intelligence works standalone without external billing; cloud streaming for Gemini Flash & Pro.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>🎨 AI Photo Studio</h3>
+                    <p>Real face-preserving full body outpainting, 1-click shirt recoloring & studio background replacement.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>💳 Payment Gateways</h3>
+                    <p>Pre-integrated Direct PhonePe UPI QR code, Razorpay, and Stripe checkout.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📱 PWA & Mobile Ready</h3>
+                    <p>100% responsive, installable on Android & iOS, ready for Amazon Appstore & Google Play.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🚀 2. Quick Local Launch</h2>
+            <p>Arun AI comes with an executable JAR pre-built with Spring Boot 3 and Java 21.</p>
+            <p><strong>Windows:</strong> Double click <code>start.bat</code></p>
+            <p><strong>Linux / macOS:</strong> Run the terminal command:</p>
+            <pre>chmod +x start.sh && ./start.sh</pre>
+            <p>Access the interface at: <code>http://localhost:8080/</code></p>
+        </div>
+
+        <div class="card">
+            <h2>🐳 3. Docker Deployment</h2>
+            <p>To run with Docker on any VPS:</p>
+            <pre>docker-compose up -d --build</pre>
+            <p>The container starts automatically on reboot and exposes port 8080.</p>
+        </div>
+
+        <div class="card">
+            <h2>💰 4. Changing Payment Gateways to Your Own Account</h2>
+            <p><strong>To receive 100% of the payments directly into your bank account:</strong></p>
+            <ul>
+                <li><strong>PhonePe UPI:</strong> Open <code>src/main/resources/templates/index.html</code>, search for <code>9014218406@ybl</code>, and replace it with your own UPI ID. Replace the QR image in <code>src/main/resources/static/images/arun_phonepe_qr.jpg</code> with your own QR code.</li>
+                <li><strong>Razorpay:</strong> Set your Razorpay Key ID in <code>index.html</code> inside the <code>payWithRazorpay()</code> function.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>📱 5. Publishing to Free App Stores</h2>
+            <p><strong>Amazon Appstore (100% Free):</strong></p>
+            <ul>
+                <li>Sign up at <a href="https://developer.amazon.com" target="_blank" style="color: var(--accent);">developer.amazon.com</a>.</li>
+                <li>Click <strong>Add New App</strong> ➔ <strong>Web App</strong>.</li>
+                <li>Enter your HTTPS hosted website URL, upload the included <code>icon-512.png</code>, and submit for free review!</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+========================================================================
+🛒 CODECANYON & MARKETPLACE LISTING COPY (COPY & PASTE READY)
+========================================================================
+
+ITEM TITLE:
+Arun AI — Turnkey Conversational AI Assistant & AI Photo Studio SaaS Platform (Spring Boot 3 + PWA + UPI Payments)
+
+SHORT DESCRIPTION:
+All-in-One AI Assistant SaaS featuring Zero-Key local intelligence, face-preserving full body photo outpainting, 1-click clothing recoloring, live web search, and integrated PhonePe UPI + Razorpay/Stripe monetization.
+
+TAGS / KEYWORDS:
+ai saas, artificial intelligence, photo studio, outpainting, image recolor, spring boot, gemini ai, phonepe upi, razorpay, pwa, chatgpt clone, turn-key saas, reactive sse, java 21
+
+REGULAR LICENSE PRICE:  - 
+EXTENDED LICENSE PRICE:  - 
+
+========================================================================
+FULL ITEM DESCRIPTION (HTML FORMAT FOR CODECANYON):
+========================================================================
+
+<p><strong>Arun AI</strong> is an enterprise-grade, turnkey Conversational AI and Visual Intelligence platform built with <strong>Spring Boot 3, Java 21, and Reactive SSE Streaming</strong>. It features an exclusive <strong>Zero-Key Standalone Intelligence Engine</strong> (meaning it runs seamlessly without requiring paid third-party API keys), while also supporting Google Gemini Flash and Pro cloud models.</p>
+
+<h3>🔥 Standout Features:</h3>
+<ul>
+    <li><strong>Dual Intelligence Engines:</strong> Works out-of-the-box with built-in zero-key standalone intelligence, plus Gemini 2.5 Flash & Pro streaming integration.</li>
+    <li><strong>ChatGPT/Gemini-Style Photo Studio:</strong> Real-face preserving full body photo outpainting (Half-to-Full body) and 1-click clothing recoloring (Charcoal Black, Navy Blue, White, Crimson Red, Emerald Green).</li>
+    <li><strong>1-Click Quick Action Magic Chips:</strong> Interactive studio chips displayed right below pictures for effortless transformations without typing.</li>
+    <li><strong>Triple Monetization Engine:</strong> Direct zero-fee PhonePe UPI QR code integration (receive 100% payments directly to your bank) + Razorpay + Stripe.</li>
+    <li><strong>Progressive Web App (PWA):</strong> Fully responsive, installable as a native app on Android and iOS, and ready for Amazon Appstore & Google Play.</li>
+    <li><strong>Enterprise Architecture:</strong> Built on Spring Boot 3, Java 21, and low-latency Server-Sent Events (SSE).</li>
+</ul>
+
+<h3>📦 What You Get in the Download:</h3>
+<ul>
+    <li>Pre-Built Standalone Executable JAR (Ready to launch in 10 seconds).</li>
+    <li>Full, Clean Java Source Code (Maven project).</li>
+    <li>1-Click Startup Scripts (<code>start.bat</code> for Windows, <code>start.sh</code> for Linux/Mac).</li>
+    <li>Production <code>Dockerfile</code> and <code>docker-compose.yml</code>.</li>
+    <li>Complete Interactive HTML Documentation with Step-by-Step VPS & Nginx Setup Guide.</li>
+    <li>Marketplace Assets (512x512 app icons, 590x300 preview banner, 80x80 thumbnail).</li>
+</ul>
+
+========================================================================
+AMAZON APPSTORE SUBMISSION COPY:
+========================================================================
+APP TITLE: Arun AI - Super Intelligence & Photo Studio
+SHORT DESCRIPTION: Your premier AI Assistant and 1-Click Studio Photo Editor with real-face preservation.
+CATEGORY: Productivity / Photo & Video
+PRICE: Free
