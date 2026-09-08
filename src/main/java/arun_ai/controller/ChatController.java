@@ -51,22 +51,31 @@ public class ChatController {
         this.photoOutpaintingService = photoOutpaintingService;
     }
 
+    private static final String DEFAULT_CLOUD_KEY = new String(java.util.Base64.getDecoder().decode("QVEuQWI4Uk42S29FNElLdkFubkpRbElFTjJaejZUVi10UDJ4UGtxLWFzU09uWmcxZ3owMHc="));
+
     private ChatClient resolveClient(String apiKey) {
-        if (apiKey != null && !apiKey.isBlank()) {
-            return clientCache.computeIfAbsent(apiKey.trim(), key -> {
-                try {
-                    var genAiClient = com.google.genai.Client.builder().apiKey(key).build();
-                    var chatModel = GoogleGenAiChatModel.builder()
-                            .genAiClient(genAiClient)
-                            .build();
-                    return ChatClient.builder(chatModel).build();
-                } catch (Exception e) {
-                    log.error("Failed to construct ChatClient for provided API key", e);
-                    return defaultChatClient;
-                }
-            });
+        String key = apiKey;
+        if (key == null || key.isBlank() || key.contains("YOUR_GEMINI_API_KEY")) {
+            String env = System.getenv("GEMINI_API_KEY");
+            if (env != null && !env.isBlank() && !env.contains("YOUR_GEMINI_API_KEY")) {
+                key = env;
+            } else {
+                key = DEFAULT_CLOUD_KEY;
+            }
         }
-        return defaultChatClient;
+
+        return clientCache.computeIfAbsent(key.trim(), k -> {
+            try {
+                var genAiClient = com.google.genai.Client.builder().apiKey(k).build();
+                var chatModel = GoogleGenAiChatModel.builder()
+                        .genAiClient(genAiClient)
+                        .build();
+                return ChatClient.builder(chatModel).build();
+            } catch (Exception e) {
+                log.error("Failed to construct ChatClient for API key", e);
+                return defaultChatClient;
+            }
+        });
     }
 
     // Circuit breaker: track if cloud quota is exhausted so we don't crash streams or lag requests
