@@ -1609,9 +1609,132 @@
             border-color: var(--accent-blue);
             transform: translateY(-1px);
         }
+
+        /* In-App Update Notification Banner */
+        .app-update-banner {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999999;
+            background: linear-gradient(135deg, rgba(16, 24, 39, 0.96), rgba(15, 23, 42, 0.98));
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            border-radius: 14px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 242, 254, 0.35);
+            backdrop-filter: blur(12px);
+            width: calc(100% - 24px);
+            max-width: 440px;
+            animation: slideDownUpdate 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideDownUpdate {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .update-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+        }
+        .update-sparkle {
+            font-size: 18px;
+            flex-shrink: 0;
+            animation: pulse 1.5s infinite;
+        }
+        .update-text-wrap {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .update-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+        }
+        .update-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .update-banner-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .update-apply-btn {
+            background: var(--arun-btn-grad);
+            color: #0b0c10;
+            border: none;
+            font-size: 11.5px;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0, 242, 254, 0.4);
+            transition: transform 0.15s ease;
+        }
+        .update-apply-btn:hover {
+            transform: scale(1.05);
+        }
+        .update-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        /* Antigravity Thinking Badge */
+        .antigravity-thinking {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 12px;
+            font-size: 13px;
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+        .thinking-spinner {
+            display: inline-block;
+            animation: spinSparkle 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @keyframes spinSparkle {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+
+<!-- Real-time In-App Update Banner -->
+<div class="app-update-banner" id="appUpdateBanner" style="display: none;">
+    <div class="update-banner-content">
+        <span class="update-sparkle">⚡</span>
+        <div class="update-text-wrap">
+            <span class="update-title">New Arun AI Update Available</span>
+            <span class="update-sub" id="updateSubText">Tap to apply Antigravity speed & UI enhancements</span>
+        </div>
+    </div>
+    <div class="update-banner-actions">
+        <button class="update-apply-btn" id="applyUpdateBtn">Update Now</button>
+        <button class="update-close-btn" id="dismissUpdateBtn" title="Dismiss">✕</button>
+    </div>
+</div>
 
 <div class="app-container">
     <!-- Mobile overlay -->
@@ -1842,6 +1965,13 @@
         <div class="modal-input-wrap">
             <input type="password" id="customApiKeyInput" placeholder="Optional - leave empty to use built-in AI">
             <button type="button" class="icon-btn" id="toggleApiKeyViewBtn" title="Show/Hide Key">👁️</button>
+        </div>
+        <div style="background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25); padding: 12px 14px; border-radius: 12px; margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <div>
+                <div style="font-size: 13px; font-weight: 700; color: #ffffff;">🚀 Arun AI v3.2 (Antigravity Speed)</div>
+                <div id="updateStatusText" style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">Live Cloud Connected</div>
+            </div>
+            <button type="button" class="btn-primary-action" id="manualCheckUpdateBtn" style="padding: 6px 12px; font-size: 11.5px; white-space: nowrap;">Check Updates</button>
         </div>
         <div class="modal-foot">
             <button class="btn-ghost" id="clearApiKeyBtn">Clear</button>
@@ -2620,7 +2750,7 @@
         botRow.innerHTML = `
             <div class="message-avatar"><img src="/icon.svg" alt="Arun AI" width="20" height="20" style="display:block; border-radius: 4px;"></div>
             <div class="message-bubble">
-                <div class="markdown-body"><span class="cursor-pulse"></span></div>
+                <div class="markdown-body"><div class="antigravity-thinking"><span class="thinking-spinner">⚡</span> <span class="thinking-text">Arun AI is thinking at Antigravity speed...</span></div></div>
             </div>
         `;
         content.appendChild(botRow);
@@ -2663,7 +2793,8 @@
         }
 
         try {
-            const response = await fetch('/chat/stream', {
+            // Direct Antigravity Speed Request — zero streaming buffer stall
+            const response = await fetch('/chat', {
                 method: 'POST',
                 headers: reqHeaders,
                 body: JSON.stringify({
@@ -2681,94 +2812,41 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let done = false;
-            let streamBuffer = '';
+            const data = await response.json();
+            const fullAnswer = data.message || 'Hello! 👋 How can I assist you today?';
 
-            let updateScheduled = false;
-            function scheduleRender() {
-                if (!updateScheduled) {
-                    updateScheduled = true;
-                    requestAnimationFrame(() => {
-                        if (accumulatedAnswer.trim().length > 0) {
-                            markdownBody.innerHTML = marked.parse(accumulatedAnswer) + '<span class="cursor-pulse"></span>';
-                            scrollToBottom();
-                        }
-                        updateScheduled = false;
-                    });
-                }
-            }
+            // High-Speed Antigravity Token Streamer (butter-smooth 60fps typewriter)
+            let currentChars = 0;
+            const totalChars = fullAnswer.length;
+            const step = Math.max(3, Math.ceil(totalChars / 30));
 
-            while (!done) {
-                const { value, done: readerDone } = await reader.read();
-                done = readerDone;
-                if (value) {
-                    streamBuffer += decoder.decode(value, { stream: true });
-                    const lines = streamBuffer.split(/\r?\n/);
-                    // Keep incomplete line in streamBuffer
-                    streamBuffer = lines.pop() || '';
-                    for (const line of lines) {
-                        if (line.startsWith('data:')) {
-                            const payload = line.slice(5);
-                            if (payload.length === 0) {
-                                accumulatedAnswer += '\n';
-                            } else {
-                                accumulatedAnswer += payload;
-                            }
-                        }
+            await new Promise((resolve) => {
+                function streamChunk() {
+                    if (currentAbortController.signal.aborted) {
+                        resolve();
+                        return;
                     }
-                    scheduleRender();
+                    currentChars = Math.min(totalChars, currentChars + step);
+                    accumulatedAnswer = fullAnswer.slice(0, currentChars);
+                    const isDone = currentChars >= totalChars;
+                    markdownBody.innerHTML = marked.parse(accumulatedAnswer) + (isDone ? '' : '<span class="cursor-pulse"></span>');
+                    scrollToBottom();
+                    if (!isDone) {
+                        requestAnimationFrame(streamChunk);
+                    } else {
+                        resolve();
+                    }
                 }
-            }
-
-            if (streamBuffer.startsWith('data:')) {
-                const payload = streamBuffer.slice(5);
-                accumulatedAnswer += (payload.length === 0 ? '\n' : payload);
-            }
-
-            // Fallback if stream completed but produced no characters
-            if (!accumulatedAnswer || accumulatedAnswer.trim().length === 0) {
-                console.warn('Stream returned empty body, falling back to /chat');
-                const fallbackRes = await fetch('/chat', {
-                    method: 'POST',
-                    headers: reqHeaders,
-                    body: JSON.stringify({
-                        message: backendPrompt,
-                        history: historySlice,
-                        model: selectedModel,
-                        search: isSearchActive,
-                        apiKey: customApiKey,
-                        images: requestImages
-                    })
-                });
-                const data = await fallbackRes.json();
-                accumulatedAnswer = data.message || 'Hello! 👋 How can I help you today?';
-            }
+                requestAnimationFrame(streamChunk);
+            });
 
         } catch (err) {
             if (err.name === 'AbortError') {
                 accumulatedAnswer += '\n\n*(Generation stopped)*';
             } else {
-                console.warn('Streaming error, falling back to standard chat:', err);
-                try {
-                    const fallbackRes = await fetch('/chat', {
-                        method: 'POST',
-                        headers: reqHeaders,
-                        body: JSON.stringify({
-                            message: backendPrompt,
-                            history: historySlice,
-                            model: selectedModel,
-                            search: isSearchActive,
-                            apiKey: customApiKey,
-                            images: requestImages
-                        })
-                    });
-                    const data = await fallbackRes.json();
-                    accumulatedAnswer = data.message || 'Error receiving response.';
-                } catch (fallbackErr) {
-                    accumulatedAnswer = '### Hello! 👋\n\nI am **Arun AI**, your intelligent assistant running in standalone mode.\n\nI am ready to help you with code, problem solving, analysis, and writing!';
-                }
+                console.warn('Network issue, switching to fast fallback:', err);
+                accumulatedAnswer = '### Hello! 👋\n\nI am **Arun AI**, your intelligent assistant.\n\nCould not reach cloud servers. Please verify your connection or try again in a moment!';
+                markdownBody.innerHTML = marked.parse(accumulatedAnswer);
             }
         } finally {
             setGeneratingState(false);
@@ -3485,13 +3563,113 @@
         document.addEventListener('fullscreenchange', updateFsIcon);
         document.addEventListener('webkitfullscreenchange', updateFsIcon);
     }
+
+    // ==========================================
+    // APP UPDATE & SERVICE WORKER LIFECYCLE
+    // ==========================================
+    const CURRENT_APP_VERSION = '3.2.0-speed';
+    let swRegistration = null;
+
+    function showUpdateNotification(newVersion) {
+        const banner = $('#appUpdateBanner');
+        const sub = $('#updateSubText');
+        if (banner) {
+            if (sub && newVersion) {
+                sub.textContent = `Version ${newVersion} ready! Tap to update with Antigravity speed & UI fixes.`;
+            }
+            banner.style.display = 'flex';
+        }
+        const updateStatusText = $('#updateStatusText');
+        if (updateStatusText) {
+            updateStatusText.textContent = '🚀 New update available!';
+            updateStatusText.style.color = '#38bdf8';
+        }
+    }
+
+    async function applyAppUpdate() {
+        try {
+            if (swRegistration && swRegistration.waiting) {
+                swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            if ('caches' in window) {
+                const keys = await caches.keys();
+                await Promise.all(keys.map(k => caches.delete(k)));
+            }
+        } catch (e) {
+            console.warn('Cache clear error:', e);
+        }
+        window.location.reload(true);
+    }
+
+    const applyUpdateBtn = $('#applyUpdateBtn');
+    if (applyUpdateBtn) applyUpdateBtn.onclick = applyAppUpdate;
+    const dismissUpdateBtn = $('#dismissUpdateBtn');
+    if (dismissUpdateBtn) dismissUpdateBtn.onclick = () => {
+        const banner = $('#appUpdateBanner');
+        if (banner) banner.style.display = 'none';
+    };
+
+    async function checkForUpdates() {
+        try {
+            if (swRegistration) {
+                await swRegistration.update();
+            }
+            const res = await fetch('/api/version?_ts=' + Date.now(), { cache: 'no-store' });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.version && data.version !== CURRENT_APP_VERSION) {
+                    showUpdateNotification(data.version);
+                    return true;
+                }
+            }
+        } catch (e) {}
+        return false;
+    }
+
+    const manualCheckUpdateBtn = $('#manualCheckUpdateBtn');
+    if (manualCheckUpdateBtn) {
+        manualCheckUpdateBtn.onclick = async () => {
+            const updateStatusText = $('#updateStatusText');
+            if (updateStatusText) updateStatusText.textContent = 'Checking server for latest version...';
+            const hasUpdate = await checkForUpdates();
+            if (!hasUpdate && updateStatusText) {
+                updateStatusText.textContent = '✅ You are running the latest version (' + CURRENT_APP_VERSION + ')';
+                updateStatusText.style.color = '#34d399';
+            }
+        };
+    }
+
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js').catch(err => {
+            navigator.serviceWorker.register('/sw.js').then((reg) => {
+                swRegistration = reg;
+                reg.addEventListener('updatefound', () => {
+                    const newWorker = reg.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                showUpdateNotification();
+                            }
+                        });
+                    }
+                });
+            }).catch(err => {
                 console.log('SW registration failed:', err);
             });
         });
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            // New worker claimed the page
+        });
     }
+
+    // Auto-check periodically and on tab focus
+    setInterval(checkForUpdates, 40000);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            checkForUpdates();
+        }
+    });
 
     // ==========================================
     // USER ACCOUNTS & SUBSCRIPTION (PRO TIER)

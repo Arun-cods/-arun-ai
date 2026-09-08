@@ -126,8 +126,7 @@ public class ChatController {
         if (hasCustomKey || System.currentTimeMillis() >= cloudQuotaBlockedUntil) {
             try {
                 ChatClient client = resolveClient(key);
-                CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> tryCallGemini(client, request, requestedModel));
-                String answer = future.get(25000, TimeUnit.MILLISECONDS);
+                String answer = tryCallGemini(client, request, requestedModel);
                 if (answer != null && !answer.isBlank()) {
                     return ResponseEntity.ok(new ChatResponse(answer));
                 }
