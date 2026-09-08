@@ -3259,77 +3259,61 @@
         customApiKeyInput.type = type;
     };
 
-    // Mobile App Modal & PWA Installation
+    // Mobile App Modal Handlers (Distraction-Free QR & APK Download)
     const mobileAppModal = $('#mobileAppModal');
     const qrCodeImg = $('#qrCodeImg');
     const mobileUrlDisplay = $('#mobileUrlDisplay');
+    const sidebarInstallBtn = $('#sidebarInstallBtn');
+    const closeMobileAppBtn = $('#closeMobileAppBtn');
+    const copyMobileUrlBtn = $('#copyMobileUrlBtn');
     let deferredInstallPrompt = null;
 
-    function getMobileAppUrl() {
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return 'http://10.133.8.198:3000';
-        }
-        return window.location.origin;
-    }
-
     function openMobileModal() {
-        const mobileUrl = getMobileAppUrl();
-        mobileUrlDisplay.textContent = mobileUrl;
-        mobileUrlDisplay.href = mobileUrl;
-        qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(mobileUrl)}`;
-        mobileAppModal.classList.add('show');
+        if (mobileAppModal) {
+            mobileAppModal.classList.add('show');
+        }
     }
 
     function closeMobileModal() {
-        mobileAppModal.classList.remove('show');
+        if (mobileAppModal) {
+            mobileAppModal.classList.remove('show');
+        }
     }
 
-    $('#mobileAppBtn').onclick = openMobileModal;
-    $('#sidebarInstallBtn').onclick = openMobileModal;
-    $('#closeMobileAppBtn').onclick = closeMobileModal;
-    mobileAppModal.onclick = (e) => {
-        if (e.target === mobileAppModal) closeMobileModal();
-    };
+    if (sidebarInstallBtn) sidebarInstallBtn.onclick = openMobileModal;
+    if (closeMobileAppBtn) closeMobileAppBtn.onclick = closeMobileModal;
+    if (mobileAppModal) {
+        mobileAppModal.onclick = (e) => {
+            if (e.target === mobileAppModal) closeMobileModal();
+        };
+    }
 
-    $('#copyMobileUrlBtn').onclick = () => {
-        const url = mobileUrlDisplay.textContent;
-        navigator.clipboard.writeText(url).then(() => {
-            const span = $('#copyMobileUrlBtn span');
-            const orig = span.textContent;
-            span.textContent = 'Copied! ✓';
-            setTimeout(() => { span.textContent = orig; }, 2000);
-        });
-    };
-
-    function triggerAppInstall() {
-        if (deferredInstallPrompt) {
-            deferredInstallPrompt.prompt();
-            deferredInstallPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    const banner = $('#installBannerBar');
-                    if (banner) banner.style.display = 'none';
+    if (copyMobileUrlBtn) {
+        copyMobileUrlBtn.onclick = () => {
+            const url = 'https://arun-ai.onrender.com/arun-ai.apk';
+            navigator.clipboard.writeText(url).then(() => {
+                const span = copyMobileUrlBtn.querySelector('span');
+                if (span) {
+                    const orig = span.textContent;
+                    span.textContent = 'Copied! ✓';
+                    setTimeout(() => { span.textContent = orig; }, 2000);
                 }
-                deferredInstallPrompt = null;
+            }).catch(() => {
+                prompt('Copy APK download link:', url);
             });
-        } else {
-            openMobileModal();
-        }
+        };
     }
 
-    $('#bannerInstallBtn').onclick = triggerAppInstall;
-    $('#modalInstallAppBtn').onclick = () => {
-        if (deferredInstallPrompt) {
-            deferredInstallPrompt.prompt();
-        } else {
-            alert("📲 To install Arun AI on your phone:\n\n1. Tap the Chrome menu (⋮ 3 dots in top right)\n2. Tap 'Install App' (or 'Add to Home screen')\n\nArun AI will be installed with its own icon on your phone!");
-        }
-    };
-
-    $('#dismissBannerBtn').onclick = () => {
-        const banner = $('#installBannerBar');
-        if (banner) banner.style.display = 'none';
-        localStorage.setItem('banner_dismissed', 'true');
-    };
+    const modalInstallAppBtn = $('#modalInstallAppBtn');
+    if (modalInstallAppBtn) {
+        modalInstallAppBtn.onclick = () => {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+            } else {
+                alert("📲 To install Arun AI on your phone:\n\n1. Tap Chrome menu (⋮ 3 dots in top right)\n2. Tap 'Install App' (or 'Add to Home screen')\n\nArun AI will be installed with its own icon on your phone!");
+            }
+        };
+    }
 
     // AI Image Creation button handlers
     function activateImageMode() {
@@ -3494,44 +3478,6 @@
         deferredInstallPrompt = null;
         alert('Arun AI was installed successfully!');
     });
-
-    // Mobile App Modal Handlers
-    const mobileAppModal = $('#mobileAppModal');
-    const mobileAppBtn = $('#mobileAppBtn');
-    const sidebarInstallBtn = $('#sidebarInstallBtn');
-    const closeMobileAppBtn = $('#closeMobileAppBtn');
-    const copyMobileUrlBtn = $('#copyMobileUrlBtn');
-    const copyMobileBtnText = $('#copyMobileBtnText');
-
-    function openMobileAppModal() {
-        if (mobileAppModal) mobileAppModal.classList.add('show');
-    }
-    function closeMobileAppModal() {
-        if (mobileAppModal) mobileAppModal.classList.remove('show');
-    }
-
-    if (mobileAppBtn) mobileAppBtn.onclick = openMobileAppModal;
-    if (sidebarInstallBtn) sidebarInstallBtn.onclick = openMobileAppModal;
-    if (closeMobileAppBtn) closeMobileAppBtn.onclick = closeMobileAppModal;
-    if (mobileAppModal) {
-        mobileAppModal.onclick = (e) => {
-            if (e.target === mobileAppModal) closeMobileAppModal();
-        };
-    }
-
-    if (copyMobileUrlBtn) {
-        copyMobileUrlBtn.onclick = () => {
-            const url = 'https://arun-ai.onrender.com/arun-ai.apk';
-            navigator.clipboard.writeText(url).then(() => {
-                if (copyMobileBtnText) copyMobileBtnText.innerText = 'Copied!';
-                setTimeout(() => {
-                    if (copyMobileBtnText) copyMobileBtnText.innerText = 'Copy Link';
-                }, 2000);
-            }).catch(() => {
-                prompt('Copy APK download link:', url);
-            });
-        };
-    }
 
     // Fullscreen Mode Toggle for Mobile & Desktop
     const fullscreenToggleBtn = $('#fullscreenToggleBtn');
