@@ -1833,48 +1833,60 @@
     </div>
 </div>
 
-<!-- Mobile App Modal -->
+<!-- Mobile App Modal (Distraction-Free QR & APK Download) -->
 <div class="modal-backdrop" id="mobileAppModal">
-    <div class="modal-card" style="text-align: center; max-width: 440px;">
-        <div class="modal-head">
-            <h3>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                Install Arun AI on Mobile
-            </h3>
-            <button class="icon-btn" id="closeMobileAppBtn" title="Close">✕</button>
+    <div class="modal-card" style="text-align: center; max-width: 440px; padding: 24px; border-radius: 20px; background: rgba(19, 22, 34, 0.96); backdrop-filter: blur(20px); border: 1px solid rgba(0, 242, 254, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+        <div class="modal-head" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                <img src="/icon.svg" width="34" height="34" style="border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 242, 254, 0.4);">
+                <div>
+                    <h3 style="margin: 0; font-size: 17px; color: #f1f5f9; font-weight: 800;">Get Arun AI Mobile App</h3>
+                    <small style="color: #00f2fe; font-size: 11.5px; font-weight: 600;">Android 5.0 to 15 • Free Download</small>
+                </div>
+            </div>
+            <button class="icon-btn" id="closeMobileAppBtn" title="Close" style="font-size: 18px;">✕</button>
         </div>
         
-        <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
-            Scan with your phone camera or connect directly on your local Wi-Fi:
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0 0 14px 0;">
+            Point your mobile camera at this QR code to download and install Arun AI instantly:
         </p>
 
         <!-- QR Code Container -->
-        <div style="background: #ffffff; padding: 12px; border-radius: 16px; display: inline-block; box-shadow: 0 4px 20px rgba(0,0,0,0.2); margin-bottom: 12px;">
-            <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=http://10.133.8.198:3000" alt="Arun AI QR Code" width="170" height="170" style="display: block; border-radius: 8px;">
+        <div style="background: #ffffff; padding: 14px; border-radius: 18px; display: inline-block; box-shadow: 0 8px 30px rgba(0, 242, 254, 0.25); margin-bottom: 14px;">
+            <img id="qrCodeImg" src="/qr-download.png" alt="Scan to Download Arun AI" width="190" height="190" style="display: block; border-radius: 6px;">
+            <div style="color: #0b0c10; font-size: 11px; font-weight: 800; margin-top: 6px; letter-spacing: 0.5px;">📷 SCAN WITH PHONE CAMERA</div>
         </div>
 
-        <div style="background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; text-align: left;">
-            <a id="mobileUrlDisplay" href="http://10.133.8.198:3000" target="_blank" style="font-size: 12.5px; color: var(--accent-blue); font-family: 'JetBrains Mono', monospace; word-break: break-all; text-decoration: underline;">http://10.133.8.198:3000</a>
-            <button type="button" class="btn-primary-action" id="copyMobileUrlBtn" style="padding: 5px 12px; font-size: 11.5px; flex-shrink: 0;">
-                <span>Copy Link</span>
-            </button>
-        </div>
-
-        <!-- Direct Download & Install Buttons -->
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-            <button type="button" class="btn-primary-action" id="modalInstallAppBtn" style="padding: 10px; font-size: 13.5px; font-weight: 700; background: linear-gradient(135deg, #0052d4, #00f2fe); color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 10px; cursor: pointer;">
-                <span>📲 Install to Phone Home Screen</span>
-            </button>
-            <a href="/download/ArunAI.apk" download="ArunAI.apk" style="padding: 9px; font-size: 12.5px; font-weight: 700; background: var(--bg-elevated); color: var(--accent-blue); border: 1px solid var(--border-subtle); border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
-                <span>📥 Download Android Package (.apk)</span>
+        <!-- Direct Download Button -->
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+            <a href="/arun-ai.apk" download="ArunAI.apk" style="padding: 12px 16px; font-size: 14px; font-weight: 800; background: linear-gradient(135deg, #00f2fe, #4facfe); color: #0b0c10; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 18px rgba(0, 242, 254, 0.35);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Download Android APK (1.9 MB)</span>
             </a>
+
+            <!-- Copy Direct Link Box -->
+            <div style="background: rgba(11, 12, 16, 0.7); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left;">
+                <span id="mobileUrlDisplay" style="font-size: 11.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">https://arun-ai.onrender.com/arun-ai.apk</span>
+                <button type="button" class="btn-primary-action" id="copyMobileUrlBtn" style="padding: 5px 10px; font-size: 11px; flex-shrink: 0; background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: var(--accent-blue); cursor: pointer;">
+                    <span id="copyMobileBtnText">Copy Link</span>
+                </button>
+            </div>
         </div>
 
-        <div style="text-align: left; font-size: 12.5px; color: var(--text-main); line-height: 1.6; background: var(--bg-elevated); padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-subtle);">
-            <b style="color: var(--accent-blue); display: block; margin-bottom: 4px;">🚀 How to install on your Phone:</b>
-            <div><b>1.</b> Connect phone to the <b>same Wi-Fi</b> as this laptop.</div>
-            <div><b>2.</b> Open <b>Chrome</b> on phone and open the link above.</div>
-            <div><b>3.</b> Tap Chrome menu <b>⋮ (3 dots)</b> ➔ Tap <b>"Install App"</b> (or "Add to Home screen")!</div>
+        <!-- Clean 3-Step Guide -->
+        <div style="text-align: left; font-size: 12px; color: var(--text-main); line-height: 1.6; background: rgba(26, 30, 48, 0.6); padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 4px;">
+                <span style="background: var(--accent-blue); color: #000; font-weight: 800; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 1px;">1</span>
+                <span><b>Scan or Click:</b> Scan QR code or tap the Download button above.</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 4px;">
+                <span style="background: var(--accent-blue); color: #000; font-weight: 800; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 1px;">2</span>
+                <span><b>Open Download:</b> Tap <b>Open</b> when download finishes.</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: flex-start;">
+                <span style="background: var(--accent-blue); color: #000; font-weight: 800; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 1px;">3</span>
+                <span><b>Install:</b> Tap <b>Install</b> to launch Arun AI on your phone!</span>
+            </div>
         </div>
     </div>
 </div>
@@ -3387,6 +3399,44 @@
         deferredInstallPrompt = null;
         alert('Arun AI was installed successfully!');
     });
+
+    // Mobile App Modal Handlers
+    const mobileAppModal = $('#mobileAppModal');
+    const mobileAppBtn = $('#mobileAppBtn');
+    const sidebarInstallBtn = $('#sidebarInstallBtn');
+    const closeMobileAppBtn = $('#closeMobileAppBtn');
+    const copyMobileUrlBtn = $('#copyMobileUrlBtn');
+    const copyMobileBtnText = $('#copyMobileBtnText');
+
+    function openMobileAppModal() {
+        if (mobileAppModal) mobileAppModal.classList.add('show');
+    }
+    function closeMobileAppModal() {
+        if (mobileAppModal) mobileAppModal.classList.remove('show');
+    }
+
+    if (mobileAppBtn) mobileAppBtn.onclick = openMobileAppModal;
+    if (sidebarInstallBtn) sidebarInstallBtn.onclick = openMobileAppModal;
+    if (closeMobileAppBtn) closeMobileAppBtn.onclick = closeMobileAppModal;
+    if (mobileAppModal) {
+        mobileAppModal.onclick = (e) => {
+            if (e.target === mobileAppModal) closeMobileAppModal();
+        };
+    }
+
+    if (copyMobileUrlBtn) {
+        copyMobileUrlBtn.onclick = () => {
+            const url = 'https://arun-ai.onrender.com/arun-ai.apk';
+            navigator.clipboard.writeText(url).then(() => {
+                if (copyMobileBtnText) copyMobileBtnText.innerText = 'Copied!';
+                setTimeout(() => {
+                    if (copyMobileBtnText) copyMobileBtnText.innerText = 'Copy Link';
+                }, 2000);
+            }).catch(() => {
+                prompt('Copy APK download link:', url);
+            });
+        };
+    }
 
     // Register Service Worker for PWA installability
     if ('serviceWorker' in navigator) {
