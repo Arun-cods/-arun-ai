@@ -1,7 +1,16 @@
 package arun_ai.service;
 
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -10,6 +19,11 @@ import java.util.regex.Pattern;
 
 @Service
 public class ZeroKeyIntelligenceEngine {
+
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(3))
+            .build();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String generateAnswer(String query) {
         if (query == null || query.isBlank()) {
@@ -122,24 +136,304 @@ public class ZeroKeyIntelligenceEngine {
                    "**Arun**\n";
         }
 
-        // Generic intelligent synthesis
-        return "### Arun AI 💡\n\n" +
-               "Here is the answer for: **" + query.trim() + "**\n\n" +
-               "1. **Core Summary**:\n" +
-               "   - " + summarizeTopic(query.trim()) + "\n\n" +
-               "2. **Key Recommendations**:\n" +
-               "   - **Architecture**: Keep components modular, decoupled, and cleanly organized.\n" +
-               "   - **Reliability**: Ensure offline/fallback availability with zero external friction.\n" +
-               "   - **Usability**: Provide direct, 1-click execution for seamless user productivity.\n\n" +
-               "3. **Next Steps**:\n" +
-               "   - Feel free to ask for specific code examples, deep explanations, or step-by-step guides!\n\n" +
-               "---\n" +
-               "*⚡ Powered by Arun AI — Unlimited Standalone Mode*";
+        // Food & Culinary Intent (Dishes, Recipes, Best Foods)
+        if (isFoodIntent(lower)) {
+            return generateFoodResponse(query);
+        }
+
+        // Political Leaders & Governance Facts
+        if (isLeadershipIntent(lower)) {
+            return generateLeadershipResponse(lower);
+        }
+
+        // Superlatives, Curiosities & World Records
+        if (isSuperlativeIntent(lower)) {
+            return generateSuperlativeResponse(lower);
+        }
+
+        // Real-Time Wikipedia Encyclopedic Knowledge Fetcher (Zero-Key Autonomous Lookup)
+        String wikiAnswer = tryFetchWikipediaSummary(query);
+        if (wikiAnswer != null && !wikiAnswer.isBlank()) {
+            return wikiAnswer;
+        }
+
+        // Intelligent Dynamic Standalone Synthesizer
+        return generateSynthesizedResponse(query);
     }
 
-    private String summarizeTopic(String query) {
-        if (query.length() < 10) return "Direct assistance and solutions for your query.";
-        return "Comprehensive overview and practical guidance tailored to your question about \"" + query + "\".";
+    private boolean isFoodIntent(String lower) {
+        return lower.contains("dish") || lower.contains("food") || lower.contains("cuisine") ||
+               lower.contains("recipe") || lower.contains("eat") || lower.contains("meal") ||
+               lower.contains("dinner") || lower.contains("lunch") || lower.contains("breakfast") ||
+               lower.contains("snack") || lower.contains("cook") || lower.contains("delicious");
+    }
+
+    private String generateFoodResponse(String query) {
+        return "### 🍽️ Top 10 World-Class Dishes for You\n\n" +
+               "Here is a curated culinary guide featuring 10 of the most celebrated, mouth-watering dishes across world cuisines:\n\n" +
+               "1. 🍲 **Hyderabadi Dum Biryani** *(India)*\n" +
+               "   - **Flavors & Profile**: Fragrant aged long-grain Basmati rice slow-cooked on *dum* in a sealed handi with marinated meat (chicken/mutton) or rich paneer, saffron-infused milk, fried golden onions (*birista*), mint, and whole aromatic spices.\n" +
+               "   - **Best paired with**: Mirchi ka Salan (tangy chili-peanut gravy) and cool cucumber-mint Raita.\n\n" +
+               "2. 🍕 **Neapolitan Pizza Margherita** *(Naples, Italy)*\n" +
+               "   - **Flavors & Profile**: Blistered wood-fired crust with a chewy airy cornicione, sweet crushed San Marzano tomatoes, fresh creamy buffalo mozzarella, fragrant sweet basil, and extra virgin olive oil.\n" +
+               "   - **Highlight**: Recognized by UNESCO as an Intangible Cultural Heritage of Humanity.\n\n" +
+               "3. 🌮 **Tacos al Pastor** *(Mexico)*\n" +
+               "   - **Flavors & Profile**: Thinly carved pork marinated in achiote, dried guajillo chilies, and pineapple juice, roasted vertically on a spinning *trompo*, served on warm freshly pressed corn tortillas with charred pineapple, cilantro, and diced onions.\n" +
+               "   - **Best paired with**: Salsa verde and freshly squeezed lime.\n\n" +
+               "4. 🍣 **Sushi & Sashimi Omakase** *(Japan)*\n" +
+               "   - **Flavors & Profile**: Masterfully prepared slices of bluefin tuna (otoro, chutoro), pristine Atlantic salmon, and sea urchin (uni) served over warm, delicately seasoned vinegared sushi rice with real grated Shizuoka wasabi.\n" +
+               "   - **Highlight**: Unrivaled harmony of purity, delicate knife skills, and umami.\n\n" +
+               "5. 🍜 **Authentic Pad Thai** *(Thailand)*\n" +
+               "   - **Flavors & Profile**: Wok-tossed rice noodles with tangy tamarind pulp, palm sugar, fish sauce, eggs, crushed roasted peanuts, fresh bean sprouts, garlic chives, and plump prawns or tofu.\n" +
+               "   - **Highlight**: Masterful balance of sweet, sour, salty, and spicy in every bite.\n\n" +
+               "6. 🍛 **Butter Chicken (Murgh Makhani)** *(India)*\n" +
+               "   - **Flavors & Profile**: Tender tandoor-roasted chicken pieces simmered in a silky, mildly sweet gravy made of vine-ripened tomatoes, rich dairy butter, fresh cream, and aromatic dried fenugreek leaves (*kasuri methi*).\n" +
+               "   - **Best paired with**: Hot garlic butter naan or fragrant jeera rice.\n\n" +
+               "7. 🍷 **Boeuf Bourguignon** *(Burgundy, France)*\n" +
+               "   - **Flavors & Profile**: Beef chuck slow-braised for hours in rich French Pinot Noir with smoked bacon lardons, baby carrots, glazed pearl onions, cremini mushrooms, and fresh bouquet garni.\n" +
+               "   - **Highlight**: Rich, velvety depth and melt-in-your-mouth tenderness.\n\n" +
+               "8. 🥘 **Paella Valenciana de Marisco** *(Spain)*\n" +
+               "   - **Flavors & Profile**: Spanish Bomba rice infused with floral saffron threads, sweet pimentón paprika, jumbo prawns, mussels, squid, and rosemary, cooked over an open fire until a crispy, caramelized crust (*socarrat*) forms at the pan base.\n" +
+               "   - **Highlight**: The crunchy, flavorful socarrat bottom layer.\n\n" +
+               "9. 🦆 **Peking Roasted Duck** *(Beijing, China)*\n" +
+               "   - **Flavors & Profile**: Air-dried, maltose-glazed duck roasted over fruitwood until the skin becomes paper-thin and shattering-crisp, served with thin steamed mandarin pancakes, cucumber matchsticks, scallions, and savory hoisin sauce.\n" +
+               "   - **Highlight**: Crisp, glossy skin with deeply savory, juicy meat.\n\n" +
+               "10. 🍝 **Classic Lasagna alla Bolognese** *(Emilia-Romagna, Italy)*\n" +
+               "    - **Flavors & Profile**: Delicate sheets of handmade egg pasta layered with a slow-simmered beef and pork ragù, silky béchamel sauce, and freshly grated aged Parmigiano-Reggiano, baked until bubbling golden-brown.\n" +
+               "    - **Highlight**: True comfort food with rich, complex savory depth.\n\n" +
+               "---\n" +
+               "💡 **Arun AI Culinary Tip**: If you're craving quick convenience, a fresh **Pad Thai** or **Neapolitan Pizza** hits the spot in minutes; if you're celebrating or hosting, nothing surpasses the majesty of authentic **Hyderabadi Dum Biryani**!\n\n" +
+               "*⚡ Powered by Arun AI Standalone Intelligence*";
+    }
+
+    private boolean isLeadershipIntent(String lower) {
+        return lower.contains("cm of") || lower.contains("chief minister") || lower.contains("present cm") ||
+               lower.contains("telangana cm") || lower.contains("ap cm") || lower.contains("prime minister") ||
+               lower.contains("pm of india") || lower.contains("president of india");
+    }
+
+    private String generateLeadershipResponse(String lower) {
+        if (lower.contains("telangana")) {
+            return "### 🏛️ Chief Minister of Telangana\n\n" +
+                   "- **Current Chief Minister**: **Anumula Revanth Reddy** (A. Revanth Reddy)\n" +
+                   "- **Assumed Office**: December 7, 2023\n" +
+                   "- **Political Party**: Indian National Congress (INC)\n" +
+                   "- **Constituency**: Kodangal Assembly Constituency\n\n" +
+                   "**Key Telangana Leadership Details**:\n" +
+                   "- **Deputy Chief Minister**: Mallu Bhatti Vikramarka (holding Finance, Planning & Energy portfolios)\n" +
+                   "- **Governor of Telangana**: Jishnu Dev Varma\n" +
+                   "- **Legislative Assembly**: 119 seats (Secretariat located in Hyderabad)\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("andhra") || lower.contains("ap cm")) {
+            return "### 🏛️ Chief Minister of Andhra Pradesh\n\n" +
+                   "- **Current Chief Minister**: **N. Chandrababu Naidu**\n" +
+                   "- **Assumed Office**: June 12, 2024\n" +
+                   "- **Political Party**: Telugu Desam Party (TDP) / NDA Alliance\n" +
+                   "- **Deputy Chief Minister**: Konidela Pawan Kalyan (Jana Sena Party)\n" +
+                   "- **State Capital**: Amaravati\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("pm") || lower.contains("prime minister")) {
+            return "### 🇮🇳 Prime Minister of India\n\n" +
+                   "- **Current Prime Minister**: **Narendra Damodardas Modi**\n" +
+                   "- **In Office**: Since May 26, 2014 (Serving his third consecutive term from June 2024)\n" +
+                   "- **Political Party**: Bharatiya Janata Party (BJP) / NDA\n" +
+                   "- **Parliamentary Constituency**: Varanasi, Uttar Pradesh\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("president")) {
+            return "### 🇮🇳 President of India\n\n" +
+                   "- **Current President**: **Droupadi Murmu**\n" +
+                   "- **Assumed Office**: July 25, 2022 (15th President of India)\n" +
+                   "- **Distinction**: First tribal woman and second female President of the Republic of India.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        return "### Leadership & Governance\n\n" +
+               "Please specify which state or country leader you would like to know about (e.g., *present CM of Telangana*, *PM of India*, or *President of USA*)!\n";
+    }
+
+    private boolean isSuperlativeIntent(String lower) {
+        return lower.contains("most expensive") || lower.contains("costliest") || lower.contains("fastest animal") ||
+               lower.contains("tallest building") || lower.contains("deepest") || lower.contains("largest planet") ||
+               lower.contains("speed of light");
+    }
+
+    private String generateSuperlativeResponse(String lower) {
+        if (lower.contains("most expensive") || lower.contains("costliest")) {
+            return "### 💎 The Most Expensive Things in the World\n\n" +
+                   "Here is the definitive ranking of the most valuable substances, materials, and structures known to humanity:\n\n" +
+                   "1. 🌌 **Antimatter** — **~$62.5 Trillion per gram**\n" +
+                   "   - **Why**: Antimatter is composed of antiparticles (e.g., positrons and antiprotons) that possess opposite charges to ordinary matter. Producing even a single nanogram requires CERN's Large Hadron Collider operating for months. When antimatter contacts ordinary matter, it undergoes 100% annihilation, releasing pure energy.\n\n" +
+                   "2. ☢️ **Californium-252** — **~$27 Million per gram**\n" +
+                   "   - **Why**: A synthetic radioactive element made only in specialized high-flux nuclear reactors. It emits immense neutron radiation, making it indispensable for oil-well logging, detecting metal stress in aircraft, and cancer radiation therapy.\n\n" +
+                   "3. ⚛️ **Endohedral Fullerenes (Nitrogen-doped Buckyballs)** — **~$140 Million per gram**\n" +
+                   "   - **Why**: Microscopic spherical carbon cages enclosing individual nitrogen atoms. Used in atomic-scale electronics and highly accurate miniature atomic clocks for satellite navigation.\n\n" +
+                   "4. 💎 **Red Diamonds** — **~$1 Million to $2 Million per carat ($5M–$10M/gram)**\n" +
+                   "   - **Why**: The rarest gemstone on Earth. Less than thirty genuine red diamonds are documented worldwide, created by unique atomic lattice distortions under extreme subterranean mantle pressure.\n\n" +
+                   "5. 🧪 **Painite** — **~$50,000 to $60,000 per carat**\n" +
+                   "   - **Why**: Discovered in Myanmar by gemologist Arthur C.D. Pain, it was formerly listed by Guinness World Records as the world's rarest gem mineral.\n\n" +
+                   "6. 🛰️ **The International Space Station (ISS)** — **~$150 Billion (Object)**\n" +
+                   "   - **Why**: The single most expensive object ever built by human civilization, constructed in orbit by a coalition of NASA, Roscosmos, ESA, JAXA, and CSA.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("fastest animal")) {
+            return "### ⚡ The Fastest Animals on Earth\n\n" +
+                   "1. 🦅 **Peregrine Falcon (Air)**: Reaches hunting dive speeds over **389 km/h (242 mph)**, making it the fastest animal on the planet.\n" +
+                   "2. 🐆 **Cheetah (Land)**: Can accelerate from 0 to 97 km/h (60 mph) in just 3 seconds, reaching top sprint speeds of **112–120 km/h (70–75 mph)**.\n" +
+                   "3. 🐟 **Black Marlin / Sailfish (Water)**: Can slice through oceans at speeds up to **100–129 km/h (62–80 mph)**.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("tallest building")) {
+            return "### 🏙️ The Tallest Building in the World\n\n" +
+                   "- **Building**: **Burj Khalifa**\n" +
+                   "- **Location**: Downtown Dubai, United Arab Emirates\n" +
+                   "- **Height**: **828 meters (2,716.5 feet)** with 163 floors\n" +
+                   "- **Completed**: 2010 (Architect: Adrian Smith / Skidmore, Owings & Merrill)\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("deepest")) {
+            return "### 🌊 The Deepest Point on Earth\n\n" +
+                   "- **Location**: **Challenger Deep** in the **Mariana Trench**\n" +
+                   "- **Depth**: Approximately **10,994 meters (36,070 feet / nearly 11 km)** deep in the Western Pacific Ocean.\n" +
+                   "- **Pressure**: Over 1,000 atmospheres (108.6 MPa), equivalent to 8 tons per square inch.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("largest planet")) {
+            return "### 🪐 The Largest Planet in our Solar System\n\n" +
+                   "- **Planet**: **Jupiter**\n" +
+                   "- **Size**: Over **1,300 Earths** could fit inside Jupiter. Its mass is 2.5 times that of all other planets in the Solar System combined.\n" +
+                   "- **Iconic Feature**: The Great Red Spot — a massive storm larger than Earth raging for hundreds of years.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("speed of light")) {
+            return "### 💡 The Speed of Light\n\n" +
+                   "- **Exact Constant**: **299,792,458 meters per second** (~300,000 km/s or 186,282 miles/s) in vacuum (*c*).\n" +
+                   "- **Travel Times**:\n" +
+                   "  - From the Moon to Earth: ~1.28 seconds\n" +
+                   "  - From the Sun to Earth: ~8 minutes and 20 seconds\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        return "### Superlatives & World Records\n\n" +
+               "Ask me about any world record, largest planet, fastest creature, or historic wonder!\n";
+    }
+
+    private String tryFetchWikipediaSummary(String query) {
+        try {
+            String topic = cleanQueryForTopic(query);
+            if (topic.isBlank() || topic.length() < 2) return null;
+
+            String encoded = URLEncoder.encode(topic.replace(" ", "_"), StandardCharsets.UTF_8);
+            String url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encoded;
+
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("User-Agent", "ArunAI/2.0 (standalone-intelligence; contact@arunai.org)")
+                    .header("Accept", "application/json")
+                    .timeout(Duration.ofSeconds(3))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() == 200) {
+                JsonNode root = objectMapper.readTree(resp.body());
+                String extract = root.path("extract").asText("");
+                String title = root.path("title").asText(topic);
+                String description = root.path("description").asText("");
+
+                if (extract.length() >= 40) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("### 📚 ").append(title);
+                    if (!description.isBlank()) {
+                        sb.append(" — *").append(description).append("*");
+                    }
+                    sb.append("\n\n");
+                    sb.append(extract).append("\n\n");
+                    sb.append("---\n");
+                    sb.append("*⚡ Powered by Arun AI Standalone Intelligence*");
+                    return sb.toString();
+                }
+            }
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    private String cleanQueryForTopic(String query) {
+        return query.trim()
+                .replaceAll("(?i)^(what\\s+is|who\\s+is|who\\s+was|where\\s+is|tell\\s+me\\s+about|explain|describe|give\\s+me\\s+info\\s+about|history\\s+of|meaning\\s+of)\\s+", "")
+                .replaceAll("[?!.,\"]+", "")
+                .trim();
+    }
+
+    private String generateSynthesizedResponse(String query) {
+        String clean = query.trim();
+        String lower = clean.toLowerCase(Locale.ROOT);
+
+        if (lower.contains("health") || lower.contains("workout") || lower.contains("fitness") || lower.contains("diet") || lower.contains("weight")) {
+            return "### 💪 Health & Fitness Guidance\n\n" +
+                   "Here are core evidence-based principles for your query regarding **" + clean + "**:\n\n" +
+                   "1. **Nutrition Foundation**: Prioritize whole single-ingredient foods, lean protein (1.6g–2.2g per kg body weight), colorful fiber-rich vegetables, and clean hydration (3–4 liters daily).\n" +
+                   "2. **Progressive Overload**: For physical training, continually increase resistance, volume, or control over time to stimulate muscle adaptation.\n" +
+                   "3. **Sleep & Recovery**: 7–9 hours of quality sleep is essential for hormonal regulation, muscle repair, and mental clarity.\n" +
+                   "4. **Consistency Over Intensity**: Sustainable daily habits outcompete extreme short-lived routines every time.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("money") || lower.contains("finance") || lower.contains("invest") || lower.contains("saving") || lower.contains("stock")) {
+            return "### 📈 Financial & Investment Principles\n\n" +
+                   "Key foundational guidelines for **" + clean + "**:\n\n" +
+                   "1. **Emergency Reserve**: Maintain 3 to 6 months of living expenses in a liquid, high-yield account before taking market risks.\n" +
+                   "2. **Budgeting Framework (50/30/20)**: Allocate 50% to essential needs, 30% to lifestyle/discretionary, and 20% directly to investments and debt elimination.\n" +
+                   "3. **Broad Market Compounding**: Historically, diversified broad-market index funds (e.g., S&P 500 or total market funds) compound wealth reliably over decades without individual stock picking risk.\n" +
+                   "4. **Continuous Skill Investment**: The highest ROI asset is often your own high-income professional skills.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        if (lower.contains("study") || lower.contains("learn") || lower.contains("focus") || lower.contains("exam") || lower.contains("memor")) {
+            return "### 🧠 High-Efficiency Learning Strategy\n\n" +
+                   "Accelerated learning blueprint for **" + clean + "**:\n\n" +
+                   "1. **Feynman Technique**: Explain the concept in simple, plain language as if teaching an 8-year-old; pinpoint where your explanation stumbles to discover true knowledge gaps.\n" +
+                   "2. **Active Recall & Spaced Repetition**: Test yourself using flashcards or practice questions at spaced intervals rather than passively rereading notes.\n" +
+                   "3. **Pomodoro Deep Focus**: Work in 25-minute sprints with zero phone notifications, followed by 5 minutes of mindful rest.\n" +
+                   "4. **Interleaved Practice**: Alternate between related problem types rather than drilling only one pattern repeatedly.\n\n" +
+                   "---\n" +
+                   "*⚡ Powered by Arun AI Standalone Intelligence*";
+        }
+
+        return "### Arun AI 💡\n\n" +
+               "Here is direct insight for: **" + clean + "**\n\n" +
+               "1. **Key Insights & Overview**:\n" +
+               "   - " + clean + " involves understanding the core underlying objectives, relevant context, and practical applications.\n" +
+               "   - For optimal results, break the topic into actionable steps or first-principles components.\n\n" +
+               "2. **Recommended Action Plan**:\n" +
+               "   - **Analyze**: Define the exact desired outcome or problem statement.\n" +
+               "   - **Implement**: Apply direct, focused effort with continuous feedback loops.\n" +
+               "   - **Refine**: Measure results and iterate based on real-world outcomes.\n\n" +
+               "Feel free to ask for specific code, a deep-dive breakdown, or step-by-step guidance on any aspect!\n\n" +
+               "---\n" +
+               "*⚡ Powered by Arun AI Standalone Intelligence*";
     }
 
     private String tryEvaluateMath(String query) {

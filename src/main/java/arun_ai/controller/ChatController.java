@@ -131,10 +131,7 @@ public class ChatController {
                     return ResponseEntity.ok(new ChatResponse(answer));
                 }
             } catch (Exception e) {
-                if (e.getMessage() != null && (e.getMessage().contains("429") || e.getMessage().contains("quota") || e.getMessage().contains("Quota"))) {
-                    cloudQuotaBlockedUntil = System.currentTimeMillis() + 60_000L;
-                }
-                log.info("Cloud engine timed out or had quota issue ({}), switching to standalone engine", e.getMessage());
+                log.info("Cloud engine encountered error ({}), switching to standalone engine", e.getMessage());
             }
         }
 
@@ -144,12 +141,34 @@ public class ChatController {
     }
 
     private String tryCallGemini(ChatClient client, ChatRequest request, String model) {
+        String[] modelsToTry = new String[] {
+            "gemini-3.5-flash-lite", // ultra fast, fresh quota
+            "gemini-3.7-flash",      // brand new, fresh quota
+            "gemini-3.5-flash",
+            "gemini-3.6-flash"
+        };
+
         List<Message> messages = buildMessages(request);
-        var promptSpec = client.prompt()
-                .system(DEFAULT_SYSTEM_PROMPT)
-                .messages(messages);
-        configureOptions(promptSpec, request, model);
-        return promptSpec.call().content();
+
+        for (String m : modelsToTry) {
+            try {
+                var promptSpec = client.prompt()
+                        .system(DEFAULT_SYSTEM_PROMPT)
+                        .messages(messages);
+                var optionsBuilder = GoogleGenAiChatOptions.builder().model(m);
+                if (Boolean.TRUE.equals(request.search())) {
+                    optionsBuilder.googleSearchRetrieval(true);
+                }
+                promptSpec.options(optionsBuilder);
+                String content = promptSpec.call().content();
+                if (content != null && !content.isBlank()) {
+                    return content;
+                }
+            } catch (Exception e) {
+                log.info("Model {} limit/timeout ({}), trying next model...", m, e.getMessage());
+            }
+        }
+        return null;
     }
 
     public Flux<String> chatStream(ChatRequest request) {
@@ -205,23 +224,52 @@ public class ChatController {
 
         try {
             ChatClient client = resolveClient(key);
-
             List<Message> messages = buildMessages(request);
+
+            // Multi-model streaming priority:
+            // "arun-neural-pro" -> try gemini-3.7-flash first, then gemini-3.5-flash-lite
+            // "arun-lightning"  -> try gemini-3.5-flash-lite first, then gemini-3.7-flash
+            final String primaryModel = "arun-lightning".equalsIgnoreCase(requestedModel) ? "gemini-3.5-flash-lite" : "gemini-3.7-flash";
+            final String backupModel  = "gemini-3.7-flash".equals(primaryModel) ? "gemini-3.5-flash-lite" : "gemini-3.7-flash";
+
             var promptSpec = client.prompt()
                     .system(DEFAULT_SYSTEM_PROMPT)
                     .messages(messages);
-
-            configureOptions(promptSpec, request, requestedModel);
+            var optBuilder = GoogleGenAiChatOptions.builder().model(primaryModel);
+            if (Boolean.TRUE.equals(request.search())) {
+                optBuilder.googleSearchRetrieval(true);
+            }
+            promptSpec.options(optBuilder);
 
             return promptSpec.stream()
                     .content()
-                    .timeout(Duration.ofMillis(20000))
-                    .onErrorResume(e -> {
-                        if (e.getMessage() != null && (e.getMessage().contains("429") || e.getMessage().contains("quota") || e.getMessage().contains("Quota"))) {
-                            cloudQuotaBlockedUntil = System.currentTimeMillis() + 60_000L;
+                    .timeout(Duration.ofMillis(15000))
+                    .onErrorResume(primaryErr -> {
+                        log.info("Primary model ({}) stream error: {}. Attempting backup model ({})...", primaryModel, primaryErr.getMessage(), backupModel);
+                        try {
+                            var backupSpec = client.prompt()
+                                    .system(DEFAULT_SYSTEM_PROMPT)
+                                    .messages(messages);
+                            var backupOpt = GoogleGenAiChatOptions.builder().model(backupModel);
+                            if (Boolean.TRUE.equals(request.search())) {
+                                backupOpt.googleSearchRetrieval(true);
+                            }
+                            backupSpec.options(backupOpt);
+
+                            return backupSpec.stream()
+                                    .content()
+                                    .timeout(Duration.ofMillis(15000))
+                                    .onErrorResume(backupErr -> {
+                                        log.info("Backup model ({}) also had error: {}. Streaming standalone engine.", backupModel, backupErr.getMessage());
+                                        if (backupErr.getMessage() != null && backupErr.getMessage().contains("429")) {
+                                            cloudQuotaBlockedUntil = System.currentTimeMillis() + 10_000L;
+                                        }
+                                        return streamFallback(request.message());
+                                    });
+                        } catch (Exception backupException) {
+                            log.info("Backup stream setup error: {}. Streaming standalone engine.", backupException.getMessage());
+                            return streamFallback(request.message());
                         }
-                        log.info("Stream error ({}), streaming standalone engine response", e.getMessage());
-                        return streamFallback(request.message());
                     });
         } catch (Exception exception) {
             log.info("Stream setup error ({}), streaming standalone engine response", exception.getMessage());
@@ -232,7 +280,7 @@ public class ChatController {
     private Flux<String> streamFallback(String message) {
         String answer = zeroKeyIntelligenceEngine.generateAnswer(message);
         String[] chunks = answer.split("(?<=\\s)");
-        return Flux.fromArray(chunks).delayElements(Duration.ofMillis(20));
+        return Flux.fromArray(chunks).delayElements(Duration.ofMillis(12));
     }
 
     private List<Message> buildMessages(ChatRequest request) {
@@ -285,11 +333,11 @@ public class ChatController {
     }
 
     private void configureOptions(ChatClient.ChatClientRequestSpec promptSpec, ChatRequest request, String model) {
-        String modelName = "gemini-3.5-flash";
-        if ("arun-lightning".equalsIgnoreCase(model) || "gemini-3.5-flash-lite".equalsIgnoreCase(model)) {
+        String modelName = "gemini-3.5-flash-lite";
+        if ("arun-neural-pro".equalsIgnoreCase(model) || "gemini-3.7-flash".equalsIgnoreCase(model)) {
+            modelName = "gemini-3.7-flash";
+        } else if ("arun-lightning".equalsIgnoreCase(model) || "gemini-3.5-flash-lite".equalsIgnoreCase(model)) {
             modelName = "gemini-3.5-flash-lite";
-        } else if ("arun-neural-pro".equalsIgnoreCase(model) || "gemini-3.5-flash".equalsIgnoreCase(model)) {
-            modelName = "gemini-3.5-flash";
         }
         try {
             var optionsBuilder = GoogleGenAiChatOptions.builder().model(modelName);
