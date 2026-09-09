@@ -2793,8 +2793,13 @@
         }
 
         try {
-            // Direct Antigravity Speed Request — zero streaming buffer stall
-            const response = await fetch('/chat', {
+            // Direct Antigravity Speed Request with 8s safety timeout so the UI never stalls on thinking badge
+            let safetyTimeoutId;
+            const timeoutPromise = new Promise((_, reject) => {
+                safetyTimeoutId = setTimeout(() => reject(new Error('REQUEST_TIMEOUT')), 8000);
+            });
+
+            const fetchPromise = fetch('/chat', {
                 method: 'POST',
                 headers: reqHeaders,
                 body: JSON.stringify({
@@ -2807,6 +2812,9 @@
                 }),
                 signal: currentAbortController.signal
             });
+
+            const response = await Promise.race([fetchPromise, timeoutPromise]);
+            clearTimeout(safetyTimeoutId);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -2822,7 +2830,7 @@
 
             await new Promise((resolve) => {
                 function streamChunk() {
-                    if (currentAbortController.signal.aborted) {
+                    if (currentAbortController && currentAbortController.signal.aborted) {
                         resolve();
                         return;
                     }
@@ -2843,9 +2851,16 @@
         } catch (err) {
             if (err.name === 'AbortError') {
                 accumulatedAnswer += '\n\n*(Generation stopped)*';
+            } else if (err.message === 'REQUEST_TIMEOUT') {
+                console.warn('Network timeout, generating instant offline response');
+                accumulatedAnswer = '### Arun AI 💡\n\nRequest timed out while waiting for cloud servers. Here is direct assistance:\n\n' +
+                                    '- **Tip**: If you are running locally, make sure the local server is started.\n' +
+                                    '- **Web App**: You can also use [https://arun-ai.onrender.com](https://arun-ai.onrender.com).\n\n' +
+                                    '*⚡ Powered by Arun AI Standalone Intelligence*';
+                markdownBody.innerHTML = marked.parse(accumulatedAnswer);
             } else {
                 console.warn('Network issue, switching to fast fallback:', err);
-                accumulatedAnswer = '### Hello! 👋\n\nI am **Arun AI**, your intelligent assistant.\n\nCould not reach cloud servers. Please verify your connection or try again in a moment!';
+                accumulatedAnswer = '### Hello! 👋\n\nI am **Arun AI**, your intelligent assistant.\n\nCould not reach server. Please ensure Arun AI is running or check your connection!';
                 markdownBody.innerHTML = marked.parse(accumulatedAnswer);
             }
         } finally {

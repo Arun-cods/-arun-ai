@@ -42,6 +42,7 @@ public class ChatController {
     private final ZeroKeyIntelligenceEngine zeroKeyIntelligenceEngine;
     private final arun_ai.service.PhotoOutpaintingService photoOutpaintingService;
     private final Map<String, ChatClient> clientCache = new ConcurrentHashMap<>();
+    private final java.util.concurrent.ExecutorService callExecutor = java.util.concurrent.Executors.newCachedThreadPool();
 
     public ChatController(ChatClient.Builder builder,
                           ZeroKeyIntelligenceEngine zeroKeyIntelligenceEngine,
@@ -141,12 +142,9 @@ public class ChatController {
     }
 
     private String tryCallGemini(ChatClient client, ChatRequest request, String model) {
-        String[] modelsToTry = new String[] {
-            "gemini-3.5-flash-lite", // ultra fast, fresh quota
-            "gemini-3.7-flash",      // brand new, fresh quota
-            "gemini-3.5-flash",
-            "gemini-3.6-flash"
-        };
+        String primary = "arun-lightning".equalsIgnoreCase(model) ? "gemini-3.5-flash-lite" : "gemini-3.7-flash";
+        String backup = "gemini-3.7-flash".equals(primary) ? "gemini-3.5-flash-lite" : "gemini-3.7-flash";
+        String[] modelsToTry = new String[] { primary, backup };
 
         List<Message> messages = buildMessages(request);
 
@@ -160,10 +158,21 @@ public class ChatController {
                     optionsBuilder.googleSearchRetrieval(true);
                 }
                 promptSpec.options(optionsBuilder);
-                String content = promptSpec.call().content();
+
+                java.util.concurrent.Future<String> future = callExecutor.submit(() -> {
+                    try {
+                        return promptSpec.call().content();
+                    } catch (Exception e) {
+                        return null;
+                    }
+                });
+
+                String content = future.get(5, java.util.concurrent.TimeUnit.SECONDS);
                 if (content != null && !content.isBlank()) {
                     return content;
                 }
+            } catch (java.util.concurrent.TimeoutException te) {
+                log.warn("Model {} timed out after 5s, trying backup model", m);
             } catch (Exception e) {
                 log.info("Model {} limit/timeout ({}), trying next model...", m, e.getMessage());
             }
